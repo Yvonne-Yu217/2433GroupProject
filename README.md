@@ -2,6 +2,51 @@
 
 ## Project Overview
 
+## SQL Reserved Words Handling
+
+To ensure compatibility with ERwin and various SQL database systems, we've taken the following approach to handle SQL reserved words in our schema:
+
+### Reserved Words Modified
+
+We've identified and renamed the following SQL reserved words to avoid potential conflicts:
+
+| Original Name | New Name      | Reason for Change |
+|---------------|---------------|-------------------|
+| `Definition`  | `DefinitionText` | Avoids conflict with SQL reserved word |
+| `Role`        | `RoleType`    | Avoids conflict with SQL reserved word |
+| `Description` | `DescriptionText` | Avoids conflict with SQL reserved word |
+| `Criteria`    | `CriteriaText` | Avoids conflict with SQL reserved word |
+| `Threshold`   | `ThresholdValue` | Avoids conflict with SQL reserved word |
+| `Level`       | `LevelNum`    | Avoids conflict with SQL reserved word |
+| `ASC`         | `ASC_Table`   | Avoids conflict with SQL ORDER BY clause |
+
+### Implementation Approach
+
+1. **Consistent Naming**: All renamed columns follow a consistent naming pattern (appending 'Text' or 'Type' as appropriate)
+2. **Foreign Key Updates**: All related foreign key constraints have been updated to reference the new column names
+3. **Documentation**: This documentation serves as a reference for developers to understand the naming conventions used
+4. **ERwin Compatibility**: These changes ensure better compatibility with ERwin data modeling tools
+
+### Example Changes
+
+```sql
+-- Before
+CREATE TABLE SomeTable (
+    ID INT PRIMARY KEY,
+    [Description] TEXT,
+    [Level] INT
+);
+
+-- After
+CREATE TABLE SomeTable (
+    ID INT PRIMARY KEY,
+    DescriptionText TEXT,
+    LevelNum INT
+);
+```
+
+## Project Overview
+
 This project enhances the database schema based on business cases from the EDA Project Support Material to support complex business scenarios. The project addresses multiple key many-to-many relationships and business rules in the insurance industry.
 
 ---
