@@ -87,6 +87,7 @@ CREATE TABLE CustomerImage (
   CustMiddleInitial CHAR(1) NOT NULL,
   CustSuffix VARCHAR(10) NOT NULL,
   CustDOB DATE NOT NULL,
+  -- -----------------------------------------------------
   ImageFileLocation VARCHAR(500) NOT NULL,
   ImageType VARCHAR(50),
   DateReceived DATETIME,
@@ -109,6 +110,7 @@ CREATE TABLE CustomerRelation (
   RelationMiddleInitial CHAR(1) NOT NULL,
   RelationSuffix VARCHAR(10) NOT NULL,
   RelationDOB DATE NOT NULL,
+  -- -----------------------------------------------------
   RelationToCustomer VARCHAR(50),
   StartDate DATE,
   EndDate DATE,
@@ -119,212 +121,61 @@ CREATE TABLE CustomerRelation (
     REFERENCES Customer (CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
 );
 
--- =================================================================
--- SQL DDL for Account Related Tables
--- Inferred from the ERD provided.
--- Designed for import into data modeling tools like Erwin.
--- =================================================================
 
--- -----------------------------------------------------
--- Table: CompanyCode
--- -----------------------------------------------------
-CREATE TABLE CompanyCode (
-  CompanyCode CHAR(2) NOT NULL,
-  LegacyCompany CHAR(2),
-  PRIMARY KEY (CompanyCode)
-);
-
--- -----------------------------------------------------
--- Table: AccountStatus
--- -----------------------------------------------------
-CREATE TABLE AccountStatus (
-  AccountStatus CHAR(1) NOT NULL,
-  AccountStatusDesc VARCHAR(255),
-  PRIMARY KEY (AccountStatus)
-);
-
--- -----------------------------------------------------
--- Table: AuthorRole
--- -----------------------------------------------------
-CREATE TABLE AuthorRole (
-  AuthorRoleID INT NOT NULL,
-  AuthorRoleDesc VARCHAR(255),
-  PRIMARY KEY (AuthorRoleID)
-);
-
+--Then create all the main tables expect for Customer, which refer to the table with bold entity titles.
 -- -----------------------------------------------------
 -- Table: Account_h
 -- -----------------------------------------------------
 CREATE TABLE Account_h (
   AccountName VARCHAR(255) NOT NULL,
-  LocationName VARCHAR(255) NOT NULL,
-  LocationAddr1 VARCHAR(255) NOT NULL,
-  LocationAddr2 VARCHAR(255),
+  AccountName2 VARCHAR(255) NOT NULL,
+  LocationAddress1 VARCHAR(255) NOT NULL,
+  LocationAddress2 VARCHAR(255) NOT NULL,
   LocationCity VARCHAR(100) NOT NULL,
   LocationState CHAR(2) NOT NULL,
   LocationZip VARCHAR(10) NOT NULL,
   CompanyCode CHAR(2) NOT NULL,
-  AccountNumber VARCHAR(50),
-  NumberofEmployees INT,
-  DateBusinessEst DATE,
-  ActivityStatus CHAR(1),
-  GroupMasterNum VARCHAR(50),
-  FlexMasterNum VARCHAR(50),
-  AcctEstablishedDate DATE,
-  AcctTerminatedDate DATE,
-  MarketTierCode CHAR(1),
-  SalesRegionCode VARCHAR(10),
-  IndustryDescription VARCHAR(255),
-  CompanyWebSite VARCHAR(255),
-  AnniversaryMonth INT,
-  AnnualizedPremium DECIMAL(18, 2),
-  LifeInforcePremium DECIMAL(18, 2),
-  AandHInforcePremium DECIMAL(18, 2),
-  LastRestructureDate DATE,
-  NextRestructureDate DATE,
   TaxIDNumber VARCHAR(20),
-  LastBillCount INT,
-  LastUpdateDate DATETIME,
-  PRIMARY KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode),
-  CONSTRAINT FK_Account_h_CompanyCode FOREIGN KEY (CompanyCode) REFERENCES CompanyCode (CompanyCode),
-  CONSTRAINT FK_Account_h_AccountStatus FOREIGN KEY (ActivityStatus) REFERENCES AccountStatus (AccountStatus)
-);
-
--- -----------------------------------------------------
--- Table: BillingAccount_h
--- -----------------------------------------------------
-CREATE TABLE BillingAccount_h (
-  BillingAddrName VARCHAR(255) NOT NULL,
-  BillingAddr1 VARCHAR(255) NOT NULL,
-  BillingCity VARCHAR(100) NOT NULL,
-  BillingState CHAR(2) NOT NULL,
-  BillingZip VARCHAR(10) NOT NULL,
-  AccountName VARCHAR(255) NOT NULL,
-  LocationName VARCHAR(255) NOT NULL,
-  LocationAddr1 VARCHAR(255) NOT NULL,
-  LocationCity VARCHAR(100) NOT NULL,
-  LocationState CHAR(2) NOT NULL,
-  LocationZip VARCHAR(10) NOT NULL,
-  CompanyCode CHAR(2) NOT NULL,
+  NumberOfEmployees INT,
+  NumberOfEmployessDate DATE,
+  ActivityStatus CHAR(1),
+  ActivityStatusDate DATE,
   GroupNumber VARCHAR(50),
-  BillingFrequency CHAR(1),
-  DateNoticeSent DATE,
-  FSAFlag CHAR(1),
-  LifeFlag CHAR(1),
-  AandHFlag CHAR(1),
-  PRIMARY KEY (BillingAddrName, BillingAddr1, BillingCity, BillingState, BillingZip, AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode),
-  CONSTRAINT FK_BillingAccount_h_Account_h FOREIGN KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-);
-
--- -----------------------------------------------------
--- Table: Account_LegacyAlias
--- -----------------------------------------------------
-CREATE TABLE Account_LegacyAlias (
-  AccountName VARCHAR(255) NOT NULL,
-  LocationName VARCHAR(255) NOT NULL,
-  LocationAddr1 VARCHAR(255) NOT NULL,
-  LocationCity VARCHAR(100) NOT NULL,
-  LocationState CHAR(2) NOT NULL,
-  LocationZip VARCHAR(10) NOT NULL,
-  CompanyCode CHAR(2) NOT NULL,
-  AliasSource VARCHAR(50) NOT NULL,
-  AliasName VARCHAR(255),
-  AliasAddr1 VARCHAR(255),
-  AliasCity VARCHAR(100),
-  AliasState CHAR(2),
-  AliasZip VARCHAR(10),
-  AliasRate VARCHAR(20),
-  PRIMARY KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode, AliasSource),
-  CONSTRAINT FK_Account_LegacyAlias_Account_h FOREIGN KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-);
-
--- -----------------------------------------------------
--- Table: Account_Member
--- -----------------------------------------------------
-CREATE TABLE Account_Member (
-  AccountName VARCHAR(255) NOT NULL,
-  LocationName VARCHAR(255) NOT NULL,
-  LocationAddr1 VARCHAR(255) NOT NULL,
-  LocationCity VARCHAR(100) NOT NULL,
-  LocationState CHAR(2) NOT NULL,
-  LocationZip VARCHAR(10) NOT NULL,
-  CompanyCode CHAR(2) NOT NULL,
-  CustLastName VARCHAR(100) NOT NULL,
-  CustFirstName VARCHAR(100) NOT NULL,
-  CustMiddleInitial CHAR(1) NOT NULL,
-  CustSuffix VARCHAR(10) NOT NULL,
-  CustDOB DATE NOT NULL,
-  PRIMARY KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode, CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB),
-  CONSTRAINT FK_Account_Member_Account_h FOREIGN KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode),
-  CONSTRAINT FK_Account_Member_Customer FOREIGN KEY (CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
-    REFERENCES Customer (CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
-);
-
-
--- -----------------------------------------------------
--- Table: AccountRelation
--- -----------------------------------------------------
-CREATE TABLE AccountRelation (
-  AccountName_Parent VARCHAR(255) NOT NULL,
-  LocationName_Parent VARCHAR(255) NOT NULL,
-  LocationAddr1_Parent VARCHAR(255) NOT NULL,
-  LocationCity_Parent VARCHAR(100) NOT NULL,
-  LocationState_Parent CHAR(2) NOT NULL,
-  LocationZip_Parent VARCHAR(10) NOT NULL,
-  CompanyCode_Parent CHAR(2) NOT NULL,
-  AccountName_Child VARCHAR(255) NOT NULL,
-  LocationName_Child VARCHAR(255) NOT NULL,
-  LocationAddr1_Child VARCHAR(255) NOT NULL,
-  LocationCity_Child VARCHAR(100) NOT NULL,
-  LocationState_Child CHAR(2) NOT NULL,
-  LocationZip_Child VARCHAR(10) NOT NULL,
-  CompanyCode_Child CHAR(2) NOT NULL,
-  RelationType VARCHAR(50),
-  PRIMARY KEY (AccountName_Parent, LocationName_Parent, LocationAddr1_Parent, LocationCity_Parent, LocationState_Parent, LocationZip_Parent, CompanyCode_Parent, AccountName_Child, LocationName_Child, LocationAddr1_Child, LocationCity_Child, LocationState_Child, LocationZip_Child, CompanyCode_Child),
-  CONSTRAINT FK_AccountRelation_Parent FOREIGN KEY (AccountName_Parent, LocationName_Parent, LocationAddr1_Parent, LocationCity_Parent, LocationState_Parent, LocationZip_Parent, CompanyCode_Parent)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode),
-  CONSTRAINT FK_AccountRelation_Child FOREIGN KEY (AccountName_Child, LocationName_Child, LocationAddr1_Child, LocationCity_Child, LocationState_Child, LocationZip_Child, CompanyCode_Child)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-);
-
-
--- -----------------------------------------------------
--- Table: AcctAdmin
--- -----------------------------------------------------
-CREATE TABLE AcctAdmin (
-  AdminID INT NOT NULL,
-  AdminLastName VARCHAR(100),
-  AdminFirstName VARCHAR(100),
-  AdminMiddleInitial CHAR(1),
-  AdminAddress1 VARCHAR(255),
-  AdminAddress2 VARCHAR(255),
-  AdminCity VARCHAR(100),
-  AdminState CHAR(2),
-  AdminZip VARCHAR(10),
-  Phone VARCHAR(20),
-  Fax VARCHAR(20),
-  PRIMARY KEY (AdminID)
-);
-
-
--- -----------------------------------------------------
--- Table: Acct_AcctAdmin
--- -----------------------------------------------------
-CREATE TABLE Acct_AcctAdmin (
-  AccountName VARCHAR(255) NOT NULL,
-  LocationName VARCHAR(255) NOT NULL,
-  LocationAddr1 VARCHAR(255) NOT NULL,
-  LocationCity VARCHAR(100) NOT NULL,
-  LocationState CHAR(2) NOT NULL,
-  LocationZip VARCHAR(10) NOT NULL,
-  CompanyCode CHAR(2) NOT NULL,
-  AdminID INT NOT NULL,
-  PRIMARY KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode, AdminID),
-  CONSTRAINT FK_Acct_AcctAdmin_Account_h FOREIGN KEY (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode)
-    REFERENCES Account_h (AccountName, LocationName, LocationAddr1, LocationCity, LocationState, LocationZip, CompanyCode),
-  CONSTRAINT FK_Acct_AcctAdmin_AcctAdmin FOREIGN KEY (AdminID)
-    REFERENCES AcctAdmin (AdminID)
+  LegacySysFlexID VARCHAR(50),
+  AccountEstablishedDate DATE,
+  PlanYearStartDate DATE,
+  PlanYearEndDate DATE,
+  SubsequentYearStartDate DATE,
+  IndustryDescription VARCHAR(255),
+  DualCompanyFlag CHAR(1),
+  ComplexAccountFlag CHAR(1),
+  StandardIndustryCode VARCHAR(20),
+  AnnualizedPremuim DECIMAL(18, 2),
+  NoOutstandingInvoices INT,
+  NoMonthsInactive INT,
+  LastInvoicePaidDate DATE,
+  LastInvoicePaidIssueDate DATE,
+  LastInvoiceGenDate DATE,
+  NextInvoiceGenDate DATE,
+  LastServiceCallDate DATE,
+  LastBillCount INT,
+  DisabilityOfferingStartDate DATE,
+  LocationPhone VARCHAR(20),
+  AddressInformationSource VARCHAR(100),
+  WebAddress VARCHAR(255),
+  SpecialHandlingCode VARCHAR(10),
+  MultiLocationAccountFlag CHAR(1),
+  PEOFlag CHAR(1),
+  DisabilityOfferingTaxStatus VARCHAR(50),
+  TransitOneFlag CHAR(1),
+  HSAFlag CHAR(1),
+  HRAFlag CHAR(1),
+  DataConfidenceLevel VARCHAR(50),
+  TotalPolicyCount INT,
+  PendingAnnualizedPremium DECIMAL(18, 2),
+  PercentByLineOfBusiness DECIMAL(5, 2),
+  ScheduledLapseDate DATE,
+  PenetrationPercentage DECIMAL(5, 2),
+  NoFSAParticipants INT,
+  PRIMARY KEY (AccountName, AccountName2, LocationAddress1, LocationAddress2, LocationCity, LocationState, LocationZip, CompanyCode)
 );
