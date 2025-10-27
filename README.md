@@ -132,7 +132,7 @@ INSERT INTO ManagerContract (
 
 This section addresses multiple many-to-many relationships between the Customer entity and other entities, which are very common in the insurance business.
 
-#### Case 3.1: Customer (n..n) Customer - Family Relationships
+#### Case 3: Customer (n..n) Customer - Family Relationships
 
 **Business Scenario: Daddy Warbucks' Family Policy**
 
@@ -160,7 +160,7 @@ INSERT INTO CustomerRelation (
 
 ---
 
-#### Case 3.2: Customer (n..n) Contract - Multiple Roles in Contracts
+### Case 4: Customer (n..n) Contract - Multiple Roles in Contracts
 
 **Business Scenario: Complex Policy Relationships**
 
@@ -236,7 +236,7 @@ INSERT INTO ContractingParty VALUES
 
 ---
 
-#### Case 3.3: Customer (n..n) ContractBenefit - Specific Benefit Recipients
+### Case 5: Customer (n..n) ContractBenefit - Specific Benefit Recipients
 
 **Business Scenario: Granular Beneficiary Designation**
 
@@ -293,7 +293,7 @@ INSERT INTO BenefitRecipient VALUES
 
 ---
 
-#### Case 3.4: Customer (n..n) Account - Multiple Employment Relationships
+### Case 6: Customer (n..n) Account - Multiple Employment Relationships
 
 **Business Scenario: Keith's Multiple Jobs**
 
@@ -331,7 +331,7 @@ INSERT INTO Account_Member (
 
 ---
 
-#### Case 3.5: Customer (n..n) Associate - Commission Bequests
+### Case 7: Customer (n..n) Associate - Commission Bequests
 
 **Business Scenario: Walt and Dave's Bequests**
 
