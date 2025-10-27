@@ -274,7 +274,7 @@ CREATE TABLE AccountEligibility (
   StartDate DATE NOT NULL,
   CompanyCode VARCHAR(10) NOT NULL,
     -- -----------------------------------------------------
-  [Description] TEXT,
+  DescriptionText TEXT,
   EndDate DATE,
   CONSTRAINT PK_AccountEligibility PRIMARY KEY (AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, StartDate, CompanyCode),
   CONSTRAINT FK_AccountEligibility_Account FOREIGN KEY (AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode)
@@ -451,7 +451,7 @@ CREATE TABLE GeoCode (
 -- -----------------------------------------------------
 CREATE TABLE Product (
   LineOfBusiness VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_Product PRIMARY KEY (LineOfBusiness)
 );
 
@@ -553,7 +553,7 @@ CREATE TABLE BillingAccountEligibility (
   BillingZip VARCHAR(10) NOT NULL,
   StartDate DATE NOT NULL,
   EndDate DATE,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_BillingAccountEligibility PRIMARY KEY (BAccName, BillingAddress1, BillingCity, BillingState, BillingZip, StartDate),
   CONSTRAINT FK_BillingAccountEligibility_BillingAccount FOREIGN KEY (BAccName, BillingAddress1, BillingCity, BillingState, BillingZip)
     REFERENCES BillingAccount (BAccName, BillingAddress1, BillingCity, BillingState, BillingZip)
@@ -691,7 +691,7 @@ CREATE TABLE License (
 -- -----------------------------------------------------
 CREATE TABLE GovAgencyDefinition (
   AgencyID VARCHAR(50) NOT NULL,
-  [Definition] TEXT,
+  DefinitionText TEXT,
   CONSTRAINT PK_GovAgencyDefinition PRIMARY KEY (AgencyID),
   CONSTRAINT FK_GovAgencyDefinition_GovernmentAgency FOREIGN KEY (AgencyID)
     REFERENCES GovernmentAgency (AgencyID)
@@ -709,7 +709,7 @@ CREATE TABLE GovAgencyDefinition (
 CREATE TABLE ProductSeries (
   LineOfBusiness VARCHAR(100) NOT NULL,
   SeriesName VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_ProductSeries PRIMARY KEY (LineOfBusiness, SeriesName),
   CONSTRAINT FK_ProductSeries_Product FOREIGN KEY (LineOfBusiness)
     REFERENCES Product (LineOfBusiness)
@@ -744,7 +744,7 @@ CREATE TABLE ProductSeriesGuideline (
   PSGName VARCHAR(100) NOT NULL,
   LineOfBusiness VARCHAR(100) NOT NULL,
   SeriesName VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_ProductSeriesGuideline PRIMARY KEY (PSGName, LineOfBusiness, SeriesName),
   CONSTRAINT FK_ProductSeriesGuideline_ProductSeries FOREIGN KEY (LineOfBusiness, SeriesName)
     REFERENCES ProductSeries (LineOfBusiness, SeriesName)
@@ -760,7 +760,7 @@ CREATE TABLE ProductPlan (
   PlanName VARCHAR(100) NOT NULL,
   RatebookLocationCode VARCHAR(50),
   PlanCode VARCHAR(50),
-  [Description] TEXT,
+  DescriptionText TEXT,
   Benefit TEXT,
   AnnualizedPremium DECIMAL(18, 2),
   CONSTRAINT PK_ProductPlan PRIMARY KEY (LineOfBusiness, SeriesName, PlanName),
@@ -794,7 +794,7 @@ CREATE TABLE ProductRider (
   PlanName VARCHAR(100) NOT NULL,
   RiderName VARCHAR(100) NOT NULL,
   RateBookLocationCode VARCHAR(50),
-  [Description] TEXT,
+  DescriptionText TEXT,
   AnnualizedPremium DECIMAL(18, 2),
   CONSTRAINT PK_ProductRider PRIMARY KEY (LineOfBusiness, SeriesName, PlanName, RiderName),
   CONSTRAINT FK_ProductRider_ProductPlan FOREIGN KEY (LineOfBusiness, SeriesName, PlanName)
@@ -810,7 +810,7 @@ CREATE TABLE ProductPlanGuidelines (
   SeriesName VARCHAR(100) NOT NULL,
   RiderName VARCHAR(100) NOT NULL,
   PlanName VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_ProductPlanGuidelines PRIMARY KEY (PPGName, LineOfBusiness, SeriesName, RiderName, PlanName),
   CONSTRAINT FK_ProductPlanGuidelines_ProductRider FOREIGN KEY (LineOfBusiness, SeriesName, PlanName, RiderName)
     REFERENCES ProductRider (LineOfBusiness, SeriesName, PlanName, RiderName)
@@ -826,7 +826,7 @@ CREATE TABLE ProductPlanGuidelines (
 -- -----------------------------------------------------
 CREATE TABLE Material (
   MaterialName VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_Material PRIMARY KEY (MaterialName)
 );
 
@@ -874,7 +874,7 @@ CREATE TABLE ProspectItem (
   ProspectState VARCHAR(50) NOT NULL,
   ProspectZip VARCHAR(10) NOT NULL,
   ItemName VARCHAR(100) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_ProspectItem PRIMARY KEY (ProspectName, ProspectAddress1, ProspectAddress2, ProspectCity, ProspectState, ProspectZip, ItemName),
   CONSTRAINT FK_ProspectItem_Prospect FOREIGN KEY (ProspectName, ProspectAddress1, ProspectAddress2, ProspectCity, ProspectState, ProspectZip)
     REFERENCES Prospect (ProspectName, ProspectAddress1, ProspectAddress2, ProspectCity, ProspectState, ProspectZip)
@@ -1229,9 +1229,9 @@ CREATE TABLE LifePremium (
 -- Table: ContractingPartyRole
 -- -----------------------------------------------------
 CREATE TABLE ContractingPartyRole (
-  [Role] VARCHAR(100) NOT NULL,
-  [Description] TEXT,
-  CONSTRAINT PK_ContractingPartyRole PRIMARY KEY ([Role])
+  RoleType VARCHAR(100) NOT NULL,
+  DescriptionText TEXT,
+  CONSTRAINT PK_ContractingPartyRole PRIMARY KEY (RoleType)
 );
 
 -- =================================================================
@@ -1487,9 +1487,9 @@ CREATE TABLE Contest (
 CREATE TABLE ContestCriteria (
   ContestName VARCHAR(100) NOT NULL,
   StartDate DATE NOT NULL,
-  [Criteria] TEXT NOT NULL,
-  [Threshold] INT,
-  CONSTRAINT PK_ContestCriteria PRIMARY KEY (ContestName, StartDate, [Criteria]),
+  CriteriaText TEXT NOT NULL,
+  ThresholdValue INT,
+  CONSTRAINT PK_ContestCriteria PRIMARY KEY (ContestName, StartDate, CriteriaText),
   CONSTRAINT FK_ContestCriteria_Contest FOREIGN KEY (ContestName, StartDate)
     REFERENCES Contest (ContestName, StartDate)
 );
@@ -1569,19 +1569,19 @@ CREATE TABLE CoordPosition_ProductionAsset (
 -- Table: DistrictRole
 -- -----------------------------------------------------
 CREATE TABLE DistrictRole (
-  [Role] VARCHAR(100) NOT NULL,
-  [Description] TEXT,
-  CONSTRAINT PK_DistrictRole PRIMARY KEY ([Role])
+  RoleType VARCHAR(100) NOT NULL,
+  DescriptionText TEXT,
+  CONSTRAINT PK_DistrictRole PRIMARY KEY (RoleType)
 );
 
 -- -----------------------------------------------------
 -- Table: Level
 -- -----------------------------------------------------
 CREATE TABLE Level (
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   LevelName VARCHAR(100),
   LevelAbbreviation VARCHAR(20),
-  CONSTRAINT PK_Level PRIMARY KEY ([Level])
+  CONSTRAINT PK_Level PRIMARY KEY (LevelNum)
 );
 
 -- -----------------------------------------------------
@@ -1590,12 +1590,12 @@ CREATE TABLE Level (
 CREATE TABLE DistrictCoordinators (
   DistrictName VARCHAR(100) NOT NULL,
   RegionName VARCHAR(100) NOT NULL,
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   StateOperationDivisionName VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1604,8 +1604,8 @@ CREATE TABLE DistrictCoordinators (
   AssocDOB DATE NOT NULL,
   EndDate DATE,
   CONSTRAINT PK_DistrictCoordinators PRIMARY KEY (
-    DistrictName, RegionName, [Role], StateOperationDivisionName, TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+    DistrictName, RegionName, RoleType, StateOperationDivisionName, TerritoryName, 
+    StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
     AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_DistrictCoordinators_District FOREIGN KEY (
@@ -1616,16 +1616,16 @@ CREATE TABLE DistrictCoordinators (
       DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
       TerritoryName, StateCode, StartDate
     ),
-  CONSTRAINT FK_DistrictCoordinators_DistrictRole FOREIGN KEY ([Role])
-    REFERENCES DistrictRole ([Role]),
+  CONSTRAINT FK_DistrictCoordinators_DistrictRole FOREIGN KEY (RoleType)
+    REFERENCES DistrictRole (RoleType),
   CONSTRAINT FK_DistrictCoordinators_Associate FOREIGN KEY (
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   )
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_DistrictCoordinators_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_DistrictCoordinators_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 
@@ -1633,7 +1633,7 @@ CREATE TABLE DistrictCoordinators (
 -- Table: DistrictAssistant
 -- -----------------------------------------------------
 CREATE TABLE DistrictAssistant (
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   DistrictName VARCHAR(100) NOT NULL,
   RegionName VARCHAR(100) NOT NULL,
   AdminName VARCHAR(100) NOT NULL,
@@ -1641,7 +1641,7 @@ CREATE TABLE DistrictAssistant (
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1651,18 +1651,18 @@ CREATE TABLE DistrictAssistant (
   PhoneNumber VARCHAR(20),
   EmailAddress VARCHAR(255),
   CONSTRAINT PK_DistrictAssistant PRIMARY KEY (
-    [Role], DistrictName, RegionName, AdminName, StateOperationDivisionName, 
-    TerritoryName, StateOperationName, StateCode, [Level], StartDate, 
+    RoleType, DistrictName, RegionName, AdminName, StateOperationDivisionName, 
+    TerritoryName, StateOperationName, StateCode, LevelNum, StartDate, 
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_DistrictAssistant_Coordinator FOREIGN KEY (
-    DistrictName, RegionName, [Role], StateOperationDivisionName, TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+    DistrictName, RegionName, RoleType, StateOperationDivisionName, TerritoryName, 
+    StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
     AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   )
     REFERENCES DistrictCoordinators (
-      DistrictName, RegionName, [Role], StateOperationDivisionName, TerritoryName, 
-      StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+      DistrictName, RegionName, RoleType, StateOperationDivisionName, TerritoryName, 
+      StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
       AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     )
 );
@@ -1670,14 +1670,14 @@ CREATE TABLE DistrictAssistant (
 -- -----------------------------------------------------
 -- Table: ASC (Associate Sales Coordinator)
 -- -----------------------------------------------------
-CREATE TABLE [ASC] (
+CREATE TABLE ASC_Table (
   DistrictName VARCHAR(100) NOT NULL,
   RegionName VARCHAR(100) NOT NULL,
   StateOperationDivisionName VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1687,7 +1687,7 @@ CREATE TABLE [ASC] (
   EndDate DATE,
   CONSTRAINT PK_ASC PRIMARY KEY (
     DistrictName, RegionName, StateOperationDivisionName, TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+    StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
     AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_ASC_District FOREIGN KEY (
@@ -1704,8 +1704,8 @@ CREATE TABLE [ASC] (
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_ASC_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_ASC_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 -- =================================================================
@@ -1718,7 +1718,7 @@ CREATE TABLE [ASC] (
 -- -----------------------------------------------------
 CREATE TABLE PhoneType (
   PhoneType VARCHAR(50) NOT NULL,
-  [Description] TEXT,
+  DescriptionText TEXT,
   CONSTRAINT PK_PhoneType PRIMARY KEY (PhoneType)
 );
 
@@ -1726,9 +1726,9 @@ CREATE TABLE PhoneType (
 -- Table: RegionRole
 -- -----------------------------------------------------
 CREATE TABLE RegionRole (
-  [Role] VARCHAR(100) NOT NULL,
-  [Description] TEXT,
-  CONSTRAINT PK_RegionRole PRIMARY KEY ([Role])
+  RoleType VARCHAR(100) NOT NULL,
+  DescriptionText TEXT,
+  CONSTRAINT PK_RegionRole PRIMARY KEY (RoleType)
 );
 
 -- -----------------------------------------------------
@@ -1762,11 +1762,11 @@ CREATE TABLE AssocPhone (
 CREATE TABLE RegionalCoordinators (
   RegionName VARCHAR(100) NOT NULL,
   StateOperationDivisionName VARCHAR(100) NOT NULL,
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1775,8 +1775,8 @@ CREATE TABLE RegionalCoordinators (
   AssocDOB DATE NOT NULL,
   EndDate DATE,
   CONSTRAINT PK_RegionalCoordinators PRIMARY KEY (
-    RegionName, StateOperationDivisionName, [Role], TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+    RegionName, StateOperationDivisionName, RoleType, TerritoryName, 
+    StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
     AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_RegionalCoordinators_Region FOREIGN KEY (
@@ -1787,16 +1787,16 @@ CREATE TABLE RegionalCoordinators (
       RegionName, StateOperationDivisionName, StateOperationName, 
       TerritoryName, StateCode, StartDate
     ),
-  CONSTRAINT FK_RegionalCoordinators_RegionRole FOREIGN KEY ([Role])
-    REFERENCES RegionRole ([Role]),
+  CONSTRAINT FK_RegionalCoordinators_RegionRole FOREIGN KEY (RoleType)
+    REFERENCES RegionRole (RoleType),
   CONSTRAINT FK_RegionalCoordinators_Associate FOREIGN KEY (
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   )
-    REFERENCES AssocPhone (
+    REFERENCES Associate(
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_RegionalCoordinators_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_RegionalCoordinators_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 
@@ -1804,14 +1804,14 @@ CREATE TABLE RegionalCoordinators (
 -- Table: RegionAssistant
 -- -----------------------------------------------------
 CREATE TABLE RegionAssistant (
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   RegionName VARCHAR(100) NOT NULL,
   AdminName VARCHAR(100) NOT NULL,
   StateOperationDivisionName VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1821,18 +1821,18 @@ CREATE TABLE RegionAssistant (
   PhoneNumber VARCHAR(20),
   EmailAddress VARCHAR(255),
   CONSTRAINT PK_RegionAssistant PRIMARY KEY (
-    [Role], RegionName, AdminName, StateOperationDivisionName, 
-    TerritoryName, StateOperationName, StateCode, [Level], StartDate, 
+    RoleType, RegionName, AdminName, StateOperationDivisionName, 
+    TerritoryName, StateOperationName, StateCode, LevelNum, StartDate, 
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_RegionAssistant_Coordinator FOREIGN KEY (
-    RegionName, StateOperationDivisionName, [Role], TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+    RegionName, StateOperationDivisionName, RoleType, TerritoryName, 
+    StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
     AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   )
     REFERENCES RegionalCoordinators (
-      RegionName, StateOperationDivisionName, [Role], TerritoryName, 
-      StateOperationName, StateCode, [Level], StartDate, AssocLastName, 
+      RegionName, StateOperationDivisionName, RoleType, TerritoryName, 
+      StateOperationName, StateCode, LevelNum, StartDate, AssocLastName, 
       AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     )
 );
@@ -1846,9 +1846,9 @@ CREATE TABLE RegionAssistant (
 -- Table: StateRole
 -- -----------------------------------------------------
 CREATE TABLE StateRole (
-  [Role] VARCHAR(100) NOT NULL,
-  [Description] TEXT,
-  CONSTRAINT PK_StateRole PRIMARY KEY ([Role])
+  RoleType VARCHAR(100) NOT NULL,
+  DescriptionText TEXT,
+  CONSTRAINT PK_StateRole PRIMARY KEY (RoleType)
 );
 
 -- -----------------------------------------------------
@@ -1856,11 +1856,11 @@ CREATE TABLE StateRole (
 -- -----------------------------------------------------
 CREATE TABLE StateCoordinators (
   StateOperationDivisionName VARCHAR(100) NOT NULL,
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1869,8 +1869,8 @@ CREATE TABLE StateCoordinators (
   AssocDOB DATE NOT NULL,
   EndDate DATE,
   CONSTRAINT PK_StateCoordinators PRIMARY KEY (
-    StateOperationDivisionName, [Role], TerritoryName, StateOperationName, 
-    StateCode, [Level], StartDate, AssocLastName, AssocFirstName, 
+    StateOperationDivisionName, RoleType, TerritoryName, StateOperationName, 
+    StateCode, LevelNum, StartDate, AssocLastName, AssocFirstName, 
     AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_StateCoordinators_StateOpDivision FOREIGN KEY (
@@ -1881,29 +1881,29 @@ CREATE TABLE StateCoordinators (
       StateOperationDivisionName, StateOperationName, TerritoryName, 
       StateCode, StartDate
     ),
-  CONSTRAINT FK_StateCoordinators_StateRole FOREIGN KEY ([Role])
-    REFERENCES StateRole ([Role]),
+  CONSTRAINT FK_StateCoordinators_StateRole FOREIGN KEY (RoleType)
+    REFERENCES StateRole (RoleType),
   CONSTRAINT FK_StateCoordinators_Associate FOREIGN KEY (
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   )
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_StateCoordinators_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_StateCoordinators_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 -- -----------------------------------------------------
 -- Table: StateAssistant
 -- -----------------------------------------------------
 CREATE TABLE StateAssistant (
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   StateOperationDivisionName VARCHAR(100) NOT NULL,
   AdminName VARCHAR(100) NOT NULL,
   TerritoryName VARCHAR(100) NOT NULL,
   StateOperationName VARCHAR(100) NOT NULL,
   StateCode VARCHAR(2) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   StartDate DATE NOT NULL,
   AssocLastName VARCHAR(100) NOT NULL,
   AssocFirstName VARCHAR(100) NOT NULL,
@@ -1913,18 +1913,18 @@ CREATE TABLE StateAssistant (
   PhoneNumber VARCHAR(20),
   EmailAddress VARCHAR(255),
   CONSTRAINT PK_StateAssistant PRIMARY KEY (
-    [Role], StateOperationDivisionName, AdminName, TerritoryName, 
-    StateOperationName, StateCode, [Level], StartDate, 
+    RoleType, StateOperationDivisionName, AdminName, TerritoryName, 
+    StateOperationName, StateCode, LevelNum, StartDate, 
     AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
   ),
   CONSTRAINT FK_StateAssistant_Coordinator FOREIGN KEY (
-    StateOperationDivisionName, [Role], TerritoryName, StateOperationName, 
-    StateCode, [Level], StartDate, AssocLastName, AssocFirstName, 
+    StateOperationDivisionName, RoleType, TerritoryName, StateOperationName, 
+    StateCode, LevelNum, StartDate, AssocLastName, AssocFirstName, 
     AssocMiddleInitial, AssocSuffix, AssocDOB
   )
     REFERENCES StateCoordinators (
-      StateOperationDivisionName, [Role], TerritoryName, StateOperationName, 
-      StateCode, [Level], StartDate, AssocLastName, AssocFirstName, 
+      StateOperationDivisionName, RoleType, TerritoryName, StateOperationName, 
+      StateCode, LevelNum, StartDate, AssocLastName, AssocFirstName, 
       AssocMiddleInitial, AssocSuffix, AssocDOB
     )
 );
@@ -1957,15 +1957,15 @@ CREATE TABLE TerritoryCoordinator (
   TerritoryName VARCHAR(100) NOT NULL,
   EmployeeID VARCHAR(50) NOT NULL,
   StartDate DATE NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   EndDate DATE,
-  CONSTRAINT PK_TerritoryCoordinator PRIMARY KEY (TerritoryName, EmployeeID, StartDate, [Level]),
+  CONSTRAINT PK_TerritoryCoordinator PRIMARY KEY (TerritoryName, EmployeeID, StartDate, LevelNum),
   CONSTRAINT FK_TerritoryCoordinator_Territory FOREIGN KEY (TerritoryName, StartDate)
     REFERENCES Territory (TerritoryName, StartDate),
   CONSTRAINT FK_TerritoryCoordinator_Employee FOREIGN KEY (EmployeeID)
     REFERENCES Employee (EmployeeID),
-  CONSTRAINT FK_TerritoryCoordinator_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_TerritoryCoordinator_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 -- =================================================================
@@ -2058,7 +2058,7 @@ CREATE TABLE Assoc_DBAs (
   AssocCity VARCHAR(100),
   AssocState VARCHAR(50),
   AssocZip VARCHAR(10),
-  [Description] TEXT,
+  DescriptionText TEXT,
   StartDate DATE,
   NationalInsuranceID VARCHAR(50),
   CONSTRAINT PK_Assoc_DBAs PRIMARY KEY (
@@ -2118,9 +2118,9 @@ CREATE TABLE WritingNumber (
 -- Table: AssociateRole
 -- -----------------------------------------------------
 CREATE TABLE AssociateRole (
-  [Role] VARCHAR(100) NOT NULL,
-  [Description] TEXT,
-  CONSTRAINT PK_AssociateRole PRIMARY KEY ([Role])
+  RoleType VARCHAR(100) NOT NULL,
+  DescriptionText TEXT,
+  CONSTRAINT PK_AssociateRole PRIMARY KEY (RoleType)
 );
 
 -- -----------------------------------------------------
@@ -2130,7 +2130,7 @@ CREATE TABLE ManagerContract (
   SitCode VARCHAR(50) NOT NULL,
   CompanyCode VARCHAR(10) NOT NULL,
   WritingNumber VARCHAR(50) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   IssueDate DATE NOT NULL,
   -- -----------------------------------------------------
   ContractType VARCHAR(50),
@@ -2155,11 +2155,11 @@ CREATE TABLE ManagerContract (
   AssocMiddleInitial CHAR(1) NOT NULL,
   AssocSuffix VARCHAR(10) NOT NULL,
   AssocDOB DATE NOT NULL,
-  CONSTRAINT PK_ManagerContract PRIMARY KEY (SitCode, CompanyCode, WritingNumber, [Level], IssueDate),
+  CONSTRAINT PK_ManagerContract PRIMARY KEY (SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate),
   CONSTRAINT FK_ManagerContract_WritingNumber FOREIGN KEY (CompanyCode, WritingNumber)
     REFERENCES WritingNumber (CompanyCode, WritingNumber),
-  CONSTRAINT FK_ManagerContract_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level]),
+  CONSTRAINT FK_ManagerContract_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum),
   CONSTRAINT FK_ManagerContract_District FOREIGN KEY (
     DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
     TerritoryName, StateCode, StartDate
@@ -2178,7 +2178,7 @@ CREATE TABLE ManagerContract (
     ParentSitCode, ParentCompanyCode, ParentWritingNumber, ParentLevel, ParentIssueDate
   )
     REFERENCES ManagerContract (
-      SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+      SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
     )
 );
 
@@ -2196,20 +2196,20 @@ CREATE TABLE Account_Associate (
   LocationCity VARCHAR(100) NOT NULL,
   LocationState VARCHAR(50) NOT NULL,
   LocationZip VARCHAR(10) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   IssueDate DATE NOT NULL,
   StartDate DATE NOT NULL,
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   StopDate DATE,
   CONSTRAINT PK_Account_Associate PRIMARY KEY (
     SitCode, CompanyCode, WritingNumber, AccountName, LocationAddress1, 
-    LocationCity, LocationState, LocationZip, [Level], IssueDate, StartDate, [Role]
+    LocationCity, LocationState, LocationZip, LevelNum, IssueDate, StartDate, RoleType
   ),
   CONSTRAINT FK_AccountAssociate_ManagerContract FOREIGN KEY (
-    SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+    SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
   )
     REFERENCES ManagerContract (
-      SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+      SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
     ),
   CONSTRAINT FK_AccountAssociate_Account FOREIGN KEY (
     AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode
@@ -2217,15 +2217,15 @@ CREATE TABLE Account_Associate (
     REFERENCES Account (
       AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode
     ),
-  CONSTRAINT FK_AccountAssociate_AssociateRole FOREIGN KEY ([Role])
-    REFERENCES AssociateRole ([Role])
+  CONSTRAINT FK_AccountAssociate_AssociateRole FOREIGN KEY (RoleType)
+    REFERENCES AssociateRole (RoleType)
 );
 
 -- -----------------------------------------------------
 -- Table: AssociateService
 -- -----------------------------------------------------
 CREATE TABLE AssociateService (
-  [Role] VARCHAR(100) NOT NULL,
+  RoleType VARCHAR(100) NOT NULL,
   SitCode VARCHAR(50) NOT NULL,
   CompanyCode VARCHAR(10) NOT NULL,
   WritingNumber VARCHAR(50) NOT NULL,
@@ -2236,21 +2236,21 @@ CREATE TABLE AssociateService (
   LocationCity VARCHAR(100) NOT NULL,
   LocationState VARCHAR(50) NOT NULL,
   LocationZip VARCHAR(10) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   IssueDate DATE NOT NULL,
   StartDate DATE NOT NULL,
   LastServiceDate DATE,
   ServiceType VARCHAR(100),
   CONSTRAINT PK_AssociateService PRIMARY KEY (
-    [Role], SitCode, CompanyCode, WritingNumber, AccountName, 
+    RoleType, SitCode, CompanyCode, WritingNumber, AccountName, 
     LocationAddress1, LocationCity, LocationState, LocationZip, 
-    [Level], IssueDate, StartDate
+    LevelNum, IssueDate, StartDate
   ),
   CONSTRAINT FK_AssociateService_ManagerContract FOREIGN KEY (
-    SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+    SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
   )
     REFERENCES ManagerContract (
-      SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+      SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
     ),
   CONSTRAINT FK_AssociateService_Account FOREIGN KEY (
     AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode
@@ -2258,10 +2258,10 @@ CREATE TABLE AssociateService (
     REFERENCES Account (
       AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode
     ),
-  CONSTRAINT FK_AssociateService_AssociateRole FOREIGN KEY ([Role])
-    REFERENCES AssociateRole ([Role]),
-  CONSTRAINT FK_AssociateService_Level FOREIGN KEY ([Level])
-    REFERENCES Level ([Level])
+  CONSTRAINT FK_AssociateService_AssociateRole FOREIGN KEY (RoleType)
+    REFERENCES AssociateRole (RoleType),
+  CONSTRAINT FK_AssociateService_Level FOREIGN KEY (LevelNum)
+    REFERENCES Level (LevelNum)
 );
 
 -- =================================================================
@@ -2278,7 +2278,7 @@ CREATE TABLE Premium_MgmtContract (
   RiderName VARCHAR(100) NOT NULL,
   SitCode VARCHAR(50) NOT NULL,
   WritingNumber VARCHAR(50) NOT NULL,
-  [Level] INT NOT NULL,
+  LevelNum INT NOT NULL,
   CompanyCode VARCHAR(10) NOT NULL,
   LineOfBusiness VARCHAR(100) NOT NULL,
   SeriesName VARCHAR(100) NOT NULL,
@@ -2290,7 +2290,7 @@ CREATE TABLE Premium_MgmtContract (
   CommissionRate DECIMAL(10, 5),
   PMR_C_Fields TEXT,
   CONSTRAINT PK_Premium_MgmtContract PRIMARY KEY (
-    ContractNumber, RiderName, SitCode, WritingNumber, [Level], 
+    ContractNumber, RiderName, SitCode, WritingNumber, LevelNum, 
     CompanyCode, LineOfBusiness, SeriesName, PlanName, 
     PremiumCode, IssueDate
   ),
@@ -2303,9 +2303,9 @@ CREATE TABLE Premium_MgmtContract (
       SeriesName, PlanName, RiderName
     ),
   CONSTRAINT FK_PremMgmt_ManagerContract FOREIGN KEY (
-    SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+    SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
   )
     REFERENCES ManagerContract (
-      SitCode, CompanyCode, WritingNumber, [Level], IssueDate
+      SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
     )
 );
