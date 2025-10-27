@@ -1624,8 +1624,8 @@ CREATE TABLE DistrictCoordinators (
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_DistrictCoordinators_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_DistrictCoordinators_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 
@@ -1704,8 +1704,8 @@ CREATE TABLE [ASC] (
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_ASC_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_ASC_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 -- =================================================================
@@ -1795,8 +1795,8 @@ CREATE TABLE RegionalCoordinators (
     REFERENCES AssocPhone (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_RegionalCoordinators_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_RegionalCoordinators_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 
@@ -1889,8 +1889,8 @@ CREATE TABLE StateCoordinators (
     REFERENCES Associate (
       AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
     ),
-  CONSTRAINT FK_StateCoordinators_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_StateCoordinators_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 -- -----------------------------------------------------
@@ -1959,13 +1959,13 @@ CREATE TABLE TerritoryCoordinator (
   StartDate DATE NOT NULL,
   [Level] INT NOT NULL,
   EndDate DATE,
-  CONSTRAINT PK_TerritoryCoordinator PRIMARY KEY (TerritoryName, EmployeeID, StartDate, Level),
+  CONSTRAINT PK_TerritoryCoordinator PRIMARY KEY (TerritoryName, EmployeeID, StartDate, [Level]),
   CONSTRAINT FK_TerritoryCoordinator_Territory FOREIGN KEY (TerritoryName, StartDate)
     REFERENCES Territory (TerritoryName, StartDate),
   CONSTRAINT FK_TerritoryCoordinator_Employee FOREIGN KEY (EmployeeID)
     REFERENCES Employee (EmployeeID),
-  CONSTRAINT FK_TerritoryCoordinator_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_TerritoryCoordinator_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 -- =================================================================
@@ -2158,8 +2158,8 @@ CREATE TABLE ManagerContract (
   CONSTRAINT PK_ManagerContract PRIMARY KEY (SitCode, CompanyCode, WritingNumber, [Level], IssueDate),
   CONSTRAINT FK_ManagerContract_WritingNumber FOREIGN KEY (CompanyCode, WritingNumber)
     REFERENCES WritingNumber (CompanyCode, WritingNumber),
-  CONSTRAINT FK_ManagerContract_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level),
+  CONSTRAINT FK_ManagerContract_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level]),
   CONSTRAINT FK_ManagerContract_District FOREIGN KEY (
     DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
     TerritoryName, StateCode, StartDate
@@ -2244,7 +2244,7 @@ CREATE TABLE AssociateService (
   CONSTRAINT PK_AssociateService PRIMARY KEY (
     [Role], SitCode, CompanyCode, WritingNumber, AccountName, 
     LocationAddress1, LocationCity, LocationState, LocationZip, 
-    Level, IssueDate, StartDate
+    [Level], IssueDate, StartDate
   ),
   CONSTRAINT FK_AssociateService_ManagerContract FOREIGN KEY (
     SitCode, CompanyCode, WritingNumber, [Level], IssueDate
@@ -2260,8 +2260,8 @@ CREATE TABLE AssociateService (
     ),
   CONSTRAINT FK_AssociateService_AssociateRole FOREIGN KEY ([Role])
     REFERENCES AssociateRole ([Role]),
-  CONSTRAINT FK_AssociateService_Level FOREIGN KEY (Level)
-    REFERENCES Level (Level)
+  CONSTRAINT FK_AssociateService_Level FOREIGN KEY ([Level])
+    REFERENCES Level ([Level])
 );
 
 -- =================================================================
