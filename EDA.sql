@@ -2859,3 +2859,90 @@ CREATE TABLE ContractingPartyInRole (
 
 
 -- Acct_AcctAdmin & BAcct_BAcctAdmin
+
+-- -----------------------------------------------------
+-- Table: BAcct_BAcctAdmin
+-- Note: Junction table to assign a specific AdminRole
+--       to a BAccAdmin for a specific BillingAccount.
+-- -----------------------------------------------------
+CREATE TABLE BAcct_BAcctAdmin (
+  -- Foreign Key columns from the BillingAccount table
+  BAccName        VARCHAR(100) NOT NULL,
+  BillingAddress1 VARCHAR(255) NOT NULL,
+  BillingCity     VARCHAR(100) NOT NULL,
+  BillingState    VARCHAR(50)  NOT NULL,
+  BillingZip      VARCHAR(10)  NOT NULL,
+
+  -- Foreign Key columns from the BAccAdmin table
+  AdminLastName       VARCHAR(100) NOT NULL,
+  AdminFirstName      VARCHAR(100) NOT NULL,
+  AdminMiddleInitial  CHAR(1)      NOT NULL,
+  AdminSuffix         VARCHAR(10)  NOT NULL,
+
+  -- Foreign Key column from the AdminRole table
+  AdminRole       VARCHAR(50)  NOT NULL,
+
+  -- Optional relationship attributes
+  StartDate       DATE         NULL,
+  EndDate         DATE         NULL,
+  Description     TEXT         NULL,
+
+  -- Composite Primary Key (includes role, like CPIR)
+  CONSTRAINT PK_BAcct_BAcctAdmin PRIMARY KEY (
+    BAccName, BillingAddress1, BillingCity, BillingState, BillingZip,
+    AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix,
+    AdminRole
+  ),
+
+  -- Foreign Keys
+  CONSTRAINT FK_BAAdmin_BillingAccount FOREIGN KEY (BAccName, BillingAddress1, BillingCity, BillingState, BillingZip)
+    REFERENCES BillingAccount (BAccName, BillingAddress1, BillingCity, BillingState, BillingZip),
+
+  CONSTRAINT FK_BAAdmin_BAccAdmin FOREIGN KEY (AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix)
+    REFERENCES BAccAdmin (AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix),
+
+  CONSTRAINT FK_BAAdmin_AdminRole FOREIGN KEY (AdminRole)
+    REFERENCES AdminRole (AdminRole)
+);
+
+
+-- -----------------------------------------------------
+-- Table: Acct_AcctAdmin
+-- Note: Junction table to assign a specific AdminRole
+--       to an AcctAdmin for a specific Account.
+-- -----------------------------------------------------
+CREATE TABLE Acct_AcctAdmin (
+  -- Foreign Key columns from the Account table
+  AccountName       VARCHAR(100) NOT NULL,
+  LocationAddress1  VARCHAR(255) NOT NULL,
+  LocationCity      VARCHAR(100) NOT NULL,
+  LocationState     VARCHAR(50)  NOT NULL,
+  LocationZip       VARCHAR(10)  NOT NULL,
+  CompanyCode       VARCHAR(10)  NOT NULL,
+
+  -- Foreign Key columns from the AcctAdmin table
+  AdminLastName       VARCHAR(100) NOT NULL,
+  AdminFirstName      VARCHAR(100) NOT NULL,
+  AdminMiddleInitial  CHAR(1)      NOT NULL,
+  AdminSuffix         VARCHAR(10)  NOT NULL,
+
+  -- Foreign Key column from the AdminRole table
+  AdminRole         VARCHAR(50)  NOT NULL,
+
+  -- Composite Primary Key (includes role, like CPIR)
+  CONSTRAINT PK_Acct_AcctAdmin PRIMARY KEY (
+    AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode,
+    AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix,
+    AdminRole
+  ),
+
+  -- Foreign Keys
+  CONSTRAINT FK_AAA_Account FOREIGN KEY (AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode)
+    REFERENCES Account (AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, CompanyCode),
+
+  CONSTRAINT FK_AAA_AcctAdmin FOREIGN KEY (AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix)
+    REFERENCES AcctAdmin (AdminLastName, AdminFirstName, AdminMiddleInitial, AdminSuffix),
+
+  CONSTRAINT FK_AAA_AdminRole FOREIGN KEY (AdminRole)
+    REFERENCES AdminRole (AdminRole)
+);
