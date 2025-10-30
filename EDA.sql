@@ -2947,3 +2947,33 @@ CREATE TABLE Acct_AcctAdmin (
   CONSTRAINT FK_AAA_AdminRole FOREIGN KEY (AdminRole)
     REFERENCES AdminRole (AdminRole)
 );
+
+
+CREATE TABLE AssociateBeneficiary (
+  -- Associate who is bequeathing
+  AssocLastName VARCHAR(100) NOT NULL,
+  AssocFirstName VARCHAR(100) NOT NULL,
+  AssocMiddleInitial CHAR(1) NOT NULL,
+  AssocSuffix VARCHAR(10) NOT NULL,
+  AssocDOB DATE NOT NULL,
+  -- Customer who is the beneficiary
+  CustLastName VARCHAR(100) NOT NULL,
+  CustFirstName VARCHAR(100) NOT NULL,
+  CustMiddleInitial CHAR(1) NOT NULL,
+  CustSuffix VARCHAR(10) NOT NULL,
+  CustDOB DATE NOT NULL,
+  -- Additional Details
+  DesignationType VARCHAR(50), -- e.g., 'Bequest', 'Commission Split'
+  Percentage DECIMAL(5, 2),    -- Benefit percentage
+  EffectiveDate DATE,           -- Effective date
+  CONSTRAINT PK_AssociateBeneficiary PRIMARY KEY (
+    AssocLastName, AssocFirstName, AssocDOB, 
+    CustLastName, CustFirstName, CustDOB
+  ),
+  CONSTRAINT FK_AssociateBeneficiary_Associate FOREIGN KEY (
+    AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
+  ) REFERENCES Associate(AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB),
+  CONSTRAINT FK_AssociateBeneficiary_Customer FOREIGN KEY (
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB
+  ) REFERENCES Customer(CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
+);
