@@ -2310,3 +2310,552 @@ CREATE TABLE Premium_MgmtContract (
       SitCode, CompanyCode, WritingNumber, LevelNum, IssueDate
     )
 );
+
+-- =================================================================
+-- SQL DDL for Contest and Geography Junction Tables
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: Territory_Contest
+-- Note: Junction table to assign multiple Contests to a Territory,
+--       and a Contest to multiple Territories.
+-- -----------------------------------------------------
+CREATE TABLE Territory_Contest (
+  TerritoryName VARCHAR(100) NOT NULL,
+  TerritoryStartDate DATE NOT NULL,
+  ContestName VARCHAR(100) NOT NULL,
+  ContestStartDate DATE NOT NULL,
+  CONSTRAINT PK_Territory_Contest PRIMARY KEY (
+    TerritoryName, TerritoryStartDate, ContestName, ContestStartDate
+  ),
+  CONSTRAINT FK_TerritoryContest_Territory FOREIGN KEY (TerritoryName, TerritoryStartDate)
+    REFERENCES Territory (TerritoryName, StartDate),
+  CONSTRAINT FK_TerritoryContest_Contest FOREIGN KEY (ContestName, ContestStartDate)
+    REFERENCES Contest (ContestName, StartDate)
+);
+
+-- -----------------------------------------------------
+-- Table: StateOpDiv_Contest
+-- Note: Junction table to assign multiple Contests to a StateOperationDivision,
+--       and a Contest to multiple StateOperationDivisions.
+-- -----------------------------------------------------
+CREATE TABLE StateOpDiv_Contest (
+  StateOperationDivisionName VARCHAR(100) NOT NULL,
+  StateOperationName VARCHAR(100) NOT NULL,
+  TerritoryName VARCHAR(100) NOT NULL,
+  StateCode VARCHAR(2) NOT NULL,
+  StateOpDivStartDate DATE NOT NULL,
+  ContestName VARCHAR(100) NOT NULL,
+  ContestStartDate DATE NOT NULL,
+  CONSTRAINT PK_StateOpDiv_Contest PRIMARY KEY (
+    StateOperationDivisionName, StateOperationName, TerritoryName, 
+    StateCode, StateOpDivStartDate, ContestName, ContestStartDate
+  ),
+  CONSTRAINT FK_StateOpDivContest_StateOpDiv FOREIGN KEY (
+    StateOperationDivisionName, StateOperationName, TerritoryName, 
+    StateCode, StateOpDivStartDate
+  )
+    REFERENCES StateOperationDivision (
+      StateOperationDivisionName, StateOperationName, TerritoryName, 
+      StateCode, StartDate
+    ),
+  CONSTRAINT FK_StateOpDivContest_Contest FOREIGN KEY (ContestName, ContestStartDate)
+    REFERENCES Contest (ContestName, StartDate)
+);
+
+-- -----------------------------------------------------
+-- Table: Region_ZipCode
+-- Note: Junction table to associate multiple ZipCodes with a Region.
+-- -----------------------------------------------------
+CREATE TABLE Region_ZipCode (
+  RegionName VARCHAR(100) NOT NULL,
+  StateOperationDivisionName VARCHAR(100) NOT NULL,
+  StateOperationName VARCHAR(100) NOT NULL,
+  TerritoryName VARCHAR(100) NOT NULL,
+  StateCode VARCHAR(2) NOT NULL,
+  RegionStartDate DATE NOT NULL,
+  ZipCode VARCHAR(10) NOT NULL,
+  CountyCode VARCHAR(10) NOT NULL,
+  CONSTRAINT PK_Region_ZipCode PRIMARY KEY (
+    RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, RegionStartDate, ZipCode, CountyCode
+  ),
+  CONSTRAINT FK_RegionZipCode_Region FOREIGN KEY (
+    RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, RegionStartDate
+  )
+    REFERENCES Region (
+      RegionName, StateOperationDivisionName, StateOperationName, 
+      TerritoryName, StateCode, StartDate
+    ),
+  CONSTRAINT FK_RegionZipCode_CountyZipCode FOREIGN KEY (ZipCode, CountyCode, StateCode)
+    REFERENCES CountyZipCode (ZipCode, CountyCode, StateCode)
+);
+
+-- =================================================================
+-- SQL DDL for Regional_Contest Junction Table
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: Regional_Contest
+-- Note: Junction table to assign multiple Contests to a Region,
+--       and a Contest to multiple Regions.
+-- -----------------------------------------------------
+CREATE TABLE Regional_Contest (
+  -- Foreign Key columns from the Region table
+  RegionName VARCHAR(100) NOT NULL,
+  StateOperationDivisionName VARCHAR(100) NOT NULL,
+  StateOperationName VARCHAR(100) NOT NULL,
+  TerritoryName VARCHAR(100) NOT NULL,
+  StateCode VARCHAR(2) NOT NULL,
+  RegionStartDate DATE NOT NULL,
+  
+  -- Foreign Key columns from the Contest table
+  ContestName VARCHAR(100) NOT NULL,
+  ContestStartDate DATE NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_Regional_Contest PRIMARY KEY (
+    RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, RegionStartDate, 
+    ContestName, ContestStartDate
+  ),
+
+  -- Define the Foreign Key constraint pointing to the Region table
+  CONSTRAINT FK_RegionalContest_Region FOREIGN KEY (
+    RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, RegionStartDate
+  )
+    REFERENCES Region (
+      RegionName, StateOperationDivisionName, StateOperationName, 
+      TerritoryName, StateCode, StartDate
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Contest table
+  CONSTRAINT FK_RegionalContest_Contest FOREIGN KEY (ContestName, ContestStartDate)
+    REFERENCES Contest (ContestName, StartDate)
+);
+
+-- =================================================================
+-- SQL DDL for District_Contest and Assoc_Contest Junction Tables
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: District_Contest
+-- Note: Junction table to assign multiple Contests to a District,
+--       and a Contest to multiple Districts.
+-- -----------------------------------------------------
+CREATE TABLE District_Contest (
+  -- Foreign Key columns from the District table
+  DistrictName VARCHAR(100) NOT NULL,
+  RegionName VARCHAR(100) NOT NULL,
+  StateOperationDivisionName VARCHAR(100) NOT NULL,
+  StateOperationName VARCHAR(100) NOT NULL,
+  TerritoryName VARCHAR(100) NOT NULL,
+  StateCode VARCHAR(2) NOT NULL,
+  DistrictStartDate DATE NOT NULL,
+  
+  -- Foreign Key columns from the Contest table
+  ContestName VARCHAR(100) NOT NULL,
+  ContestStartDate DATE NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_District_Contest PRIMARY KEY (
+    DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, DistrictStartDate, 
+    ContestName, ContestStartDate
+  ),
+
+  -- Define the Foreign Key constraint pointing to the District table
+  CONSTRAINT FK_DistrictContest_District FOREIGN KEY (
+    DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
+    TerritoryName, StateCode, DistrictStartDate
+  )
+    REFERENCES District (
+      DistrictName, RegionName, StateOperationDivisionName, StateOperationName, 
+      TerritoryName, StateCode, StartDate
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Contest table
+  CONSTRAINT FK_DistrictContest_Contest FOREIGN KEY (ContestName, ContestStartDate)
+    REFERENCES Contest (ContestName, StartDate)
+);
+
+-- -----------------------------------------------------
+-- Table: Assoc_Contest
+-- Note: Junction table to assign multiple Contests to an Associate,
+--       and a Contest to multiple Associates.
+-- -----------------------------------------------------
+CREATE TABLE Assoc_Contest (
+  -- Foreign Key columns from the Associate table
+  AssocLastName VARCHAR(100) NOT NULL,
+  AssocFirstName VARCHAR(100) NOT NULL,
+  AssocMiddleInitial CHAR(1) NOT NULL,
+  AssocSuffix VARCHAR(10) NOT NULL,
+  AssocDOB DATE NOT NULL,
+
+  -- Foreign Key columns from the Contest table
+  ContestName VARCHAR(100) NOT NULL,
+  ContestStartDate DATE NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_Assoc_Contest PRIMARY KEY (
+    AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB, 
+    ContestName, ContestStartDate
+  ),
+
+  -- Define the Foreign Key constraint pointing to the Associate table
+  CONSTRAINT FK_AssocContest_Associate FOREIGN KEY (
+    AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
+  )
+    REFERENCES Associate (
+      AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Contest table
+  CONSTRAINT FK_AssocContest_Contest FOREIGN KEY (ContestName, ContestStartDate)
+    REFERENCES Contest (ContestName, StartDate)
+);
+
+-- =================================================================
+-- SQL DDL for LegacyPolicy_Account Junction Table
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: LegacyPolicy_Account
+-- Note: Junction table to link a legacy account alias to a modern contract/policy.
+-- -----------------------------------------------------
+CREATE TABLE LegacyPolicy_Account (
+  -- Foreign Key columns from the AccountLegacyAlias table
+  AccountName VARCHAR(100) NOT NULL,
+  LocationAddress1 VARCHAR(255) NOT NULL,
+  LocationCity VARCHAR(100) NOT NULL,
+  LocationState VARCHAR(50) NOT NULL,
+  LocationZip VARCHAR(10) NOT NULL,
+  AliasSource VARCHAR(100) NOT NULL,
+  AliasID VARCHAR(50) NOT NULL,
+  CompanyCode VARCHAR(10) NOT NULL,
+
+  -- Foreign Key columns from the Contract table
+  ContractNumber VARCHAR(100) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+  SeriesName VARCHAR(100) NOT NULL,
+  PlanName VARCHAR(100) NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_LegacyPolicy_Account PRIMARY KEY (
+    AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, 
+    AliasSource, AliasID, CompanyCode, ContractNumber, 
+    LineOfBusiness, SeriesName, PlanName
+  ),
+
+  -- Define the Foreign Key constraint pointing to the AccountLegacyAlias table
+  CONSTRAINT FK_LegacyPolicy_AccountLegacyAlias FOREIGN KEY (
+    AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, 
+    AliasSource, AliasID, CompanyCode
+  )
+    REFERENCES AccountLegacyAlias (
+      AccountName, LocationAddress1, LocationCity, LocationState, LocationZip, 
+      AliasSource, AliasID, CompanyCode
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Contract table
+  CONSTRAINT FK_LegacyPolicy_Contract FOREIGN KEY (
+    ContractNumber, LineOfBusiness, SeriesName, PlanName
+  )
+    REFERENCES Contract (
+      ContractNumber, LineOfBusiness, SeriesName, PlanName
+    )
+);
+
+-- =================================================================
+-- SQL DDL for License_WritingNumber and AssocMaterial Junction Tables
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: License_WritingNumber
+-- Note: Junction table to link a License to a WritingNumber.
+-- -----------------------------------------------------
+CREATE TABLE License_WritingNumber (
+  -- Foreign Key columns from the License table
+  LicenseState VARCHAR(50) NOT NULL,
+  LicenseNumber VARCHAR(100) NOT NULL,
+  AgencyID VARCHAR(50) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+
+  -- Foreign Key columns from the WritingNumber table
+  CompanyCode VARCHAR(10) NOT NULL,
+  WritingNumber VARCHAR(50) NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_License_WritingNumber PRIMARY KEY (
+    LicenseState, LicenseNumber, AgencyID, LineOfBusiness, 
+    CompanyCode, WritingNumber
+  ),
+
+  -- Define the Foreign Key constraint pointing to the License table
+  CONSTRAINT FK_LicWritNum_License FOREIGN KEY (LicenseState, LicenseNumber, AgencyID, LineOfBusiness)
+    REFERENCES License (LicenseState, LicenseNumber, AgencyID, LineOfBusiness),
+
+  -- Define the Foreign Key constraint pointing to the WritingNumber table
+  CONSTRAINT FK_LicWritNum_WritingNumber FOREIGN KEY (CompanyCode, WritingNumber)
+    REFERENCES WritingNumber (CompanyCode, WritingNumber)
+);
+
+-- -----------------------------------------------------
+-- Table: AssocMaterial
+-- Note: Junction table to link Associates to the Materials they use.
+-- -----------------------------------------------------
+CREATE TABLE AssocMaterial (
+  -- Foreign Key columns from the Associate table
+  AssocLastName VARCHAR(100) NOT NULL,
+  AssocFirstName VARCHAR(100) NOT NULL,
+  AssocMiddleInitial CHAR(1) NOT NULL,
+  AssocSuffix VARCHAR(10) NOT NULL,
+  AssocDOB DATE NOT NULL,
+
+  -- Foreign Key column from the Material table
+  MaterialName VARCHAR(100) NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_AssocMaterial PRIMARY KEY (
+    AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB, 
+    MaterialName
+  ),
+
+  -- Define the Foreign Key constraint pointing to the Associate table
+  CONSTRAINT FK_AssocMaterial_Associate FOREIGN KEY (
+    AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
+  )
+    REFERENCES Associate (
+      AssocLastName, AssocFirstName, AssocMiddleInitial, AssocSuffix, AssocDOB
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Material table
+  CONSTRAINT FK_AssocMaterial_Material FOREIGN KEY (MaterialName)
+    REFERENCES Material (MaterialName)
+);
+
+-- =================================================================
+-- SQL DDL for Various Junction Tables
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: Coverage_Claim
+-- Note: Junction table linking a specific ClaimantImage (as evidence of coverage) to a Claim.
+-- The diagram is slightly ambiguous; this interpretation links the visual entities directly.
+-- -----------------------------------------------------
+CREATE TABLE Coverage_Claim (
+  -- Foreign Key columns from the ClaimantImage table
+  DocumentID VARCHAR(50) NOT NULL,
+  ContractNumber VARCHAR(100) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+  SeriesName VARCHAR(100) NOT NULL,
+  PlanName VARCHAR(100) NOT NULL,
+
+  -- Foreign Key column from the Claim table (ClaimNumber is in both, so listed once)
+  ClaimNumber VARCHAR(100) NOT NULL,
+
+  CONSTRAINT PK_Coverage_Claim PRIMARY KEY (
+    DocumentID, ContractNumber, LineOfBusiness, SeriesName, PlanName, ClaimNumber
+  ),
+  CONSTRAINT FK_CoverageClaim_ClaimantImage FOREIGN KEY (
+    DocumentID, ContractNumber, ClaimNumber, LineOfBusiness, SeriesName, PlanName
+  )
+    REFERENCES ClaimantImage (
+      DocumentID, ContractNumber, ClaimNumber, LineOfBusiness, SeriesName, PlanName
+    ),
+  CONSTRAINT FK_CoverageClaim_Claim FOREIGN KEY (ClaimNumber)
+    REFERENCES Claim (ClaimNumber)
+);
+
+-- -----------------------------------------------------
+-- Table: ClaimEvent
+-- Note: Junction table to associate multiple Images with a single Claim event.
+-- -----------------------------------------------------
+CREATE TABLE ClaimEvent (
+  -- Foreign Key columns from the ClaimImage table
+  DocumentID VARCHAR(50) NOT NULL,
+  
+  -- Foreign Key column from the Claim table
+  ClaimNumber VARCHAR(100) NOT NULL,
+
+  CONSTRAINT PK_ClaimEvent PRIMARY KEY (DocumentID, ClaimNumber),
+  CONSTRAINT FK_ClaimEvent_ClaimImage FOREIGN KEY (DocumentID, ClaimNumber)
+    REFERENCES ClaimImage (DocumentID, ClaimNumber),
+  CONSTRAINT FK_ClaimEvent_Claim FOREIGN KEY (ClaimNumber)
+    REFERENCES Claim (ClaimNumber)
+);
+
+-- -----------------------------------------------------
+-- Table: InvoiceGrouping
+-- Note: Junction table to group multiple Invoice Details under a single master Invoice.
+-- -----------------------------------------------------
+CREATE TABLE InvoiceGrouping (
+  -- Foreign Key columns from the InvoiceDetail table
+  InvoiceLineNumber INT NOT NULL,
+
+  -- Foreign Key column from the Invoice table
+  InvoiceNumber VARCHAR(100) NOT NULL,
+  
+  CONSTRAINT PK_InvoiceGrouping PRIMARY KEY (InvoiceLineNumber, InvoiceNumber),
+  CONSTRAINT FK_InvoiceGrouping_InvoiceDetail FOREIGN KEY (InvoiceNumber, InvoiceLineNumber)
+    REFERENCES InvoiceDetail (InvoiceNumber, InvoiceLineNumber),
+  CONSTRAINT FK_InvoiceGrouping_Invoice FOREIGN KEY (InvoiceNumber)
+    REFERENCES Invoice (InvoiceNumber)
+);
+
+-- -----------------------------------------------------
+-- Table: BillingAccount_Remittance
+-- Note: Junction table to link a BillingAccount to a Remittance record.
+-- -----------------------------------------------------
+CREATE TABLE BillingAccount_Remittance (
+  -- Foreign Key columns from the BillingAccount table
+  BAccName VARCHAR(100) NOT NULL,
+  BillingAddress1 VARCHAR(255) NOT NULL,
+  BillingCity VARCHAR(100) NOT NULL,
+  BillingState VARCHAR(50) NOT NULL,
+  BillingZip VARCHAR(10) NOT NULL,
+
+  -- Foreign Key columns from the Remittance table
+  ContractNumber VARCHAR(100) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+  SeriesName VARCHAR(100) NOT NULL,
+  PlanName VARCHAR(100) NOT NULL,
+  CustLastName VARCHAR(100) NOT NULL,
+  CustFirstName VARCHAR(100) NOT NULL,
+  CustMiddleInitial CHAR(1) NOT NULL,
+  CustSuffix VARCHAR(10) NOT NULL,
+  CustDOB DATE NOT NULL,
+  RemittanceDate DATE NOT NULL,
+
+  CONSTRAINT PK_BillingAccount_Remittance PRIMARY KEY (
+    BAccName, BillingAddress1, BillingCity, BillingState, BillingZip,
+    ContractNumber, LineOfBusiness, SeriesName, PlanName,
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB,
+    RemittanceDate
+  ),
+  CONSTRAINT FK_BillAcctRemit_BillingAccount FOREIGN KEY (
+    BAccName, BillingAddress1, BillingCity, BillingState, BillingZip
+  )
+    REFERENCES BillingAccount (
+      BAccName, BillingAddress1, BillingCity, BillingState, BillingZip
+    ),
+  CONSTRAINT FK_BillAcctRemit_Remittance FOREIGN KEY (
+    ContractNumber, LineOfBusiness, SeriesName, PlanName,
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB,
+    RemittanceDate
+  )
+    REFERENCES Remittance (
+      ContractNumber, LineOfBusiness, SeriesName, PlanName,
+      CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB,
+      RemittanceDate
+    )
+);
+
+-- =================================================================
+-- SQL DDL for BenefitForBenefitingParty Junction Table
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: BenefitForBenefitingParty
+-- Note: Junction table to link a specific premium to the customer it benefits.
+-- -----------------------------------------------------
+CREATE TABLE BenefitForBenefitingParty (
+  -- Foreign Key columns from the ContractPremium table
+  PremiumCode VARCHAR(50) NOT NULL,
+  ContractNumber VARCHAR(100) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+  SeriesName VARCHAR(100) NOT NULL,
+  PlanName VARCHAR(100) NOT NULL,
+  RiderName VARCHAR(100) NOT NULL,
+
+  -- Foreign Key columns from the Customer table
+  CustLastName VARCHAR(100) NOT NULL,
+  CustFirstName VARCHAR(100) NOT NULL,
+  CustMiddleInitial CHAR(1) NOT NULL,
+  CustSuffix VARCHAR(10) NOT NULL,
+  CustDOB DATE NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_BenefitForBenefitingParty PRIMARY KEY (
+    PremiumCode, ContractNumber, LineOfBusiness, SeriesName, PlanName, RiderName,
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB
+  ),
+
+  -- Define the Foreign Key constraint pointing to the ContractPremium table
+  CONSTRAINT FK_BFP_ContractPremium FOREIGN KEY (
+    PremiumCode, ContractNumber, LineOfBusiness, 
+    SeriesName, PlanName, RiderName
+  )
+    REFERENCES ContractPremium (
+      PremiumCode, ContractNumber, LineOfBusiness, 
+      SeriesName, PlanName, RiderName
+    ),
+
+  -- Define the Foreign Key constraint pointing to the Customer table
+  CONSTRAINT FK_BFP_Customer FOREIGN KEY (
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB
+  )
+    REFERENCES Customer (
+      CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB
+    )
+);
+
+-- =================================================================
+-- SQL DDL for ContractingPartyInRole Junction Table
+-- Inferred from the ERD provided.
+-- =================================================================
+
+-- -----------------------------------------------------
+-- Table: ContractingPartyInRole
+-- Note: Junction table to assign a specific role (e.g., Owner, Payer, Insured)
+--       to a Customer for a specific Contract.
+-- -----------------------------------------------------
+CREATE TABLE ContractingPartyInRole (
+  -- Foreign Key columns from the Contract table
+  ContractNumber VARCHAR(100) NOT NULL,
+  LineOfBusiness VARCHAR(100) NOT NULL,
+  SeriesName VARCHAR(100) NOT NULL,
+  PlanName VARCHAR(100) NOT NULL,
+
+  -- Foreign Key columns from the Customer table
+  CustLastName VARCHAR(100) NOT NULL,
+  CustFirstName VARCHAR(100) NOT NULL,
+  CustMiddleInitial CHAR(1) NOT NULL,
+  CustSuffix VARCHAR(10) NOT NULL,
+  CustDOB DATE NOT NULL,
+  
+  -- Foreign Key column from the ContractingPartyRole table
+  RoleType VARCHAR(100) NOT NULL,
+
+  -- Define the composite Primary Key for this junction table
+  CONSTRAINT PK_ContractingPartyInRole PRIMARY KEY (
+    ContractNumber, LineOfBusiness, SeriesName, PlanName,
+    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB,
+    RoleType
+  ),
+
+  -- Define the Foreign Key constraint pointing to the Contract table
+  CONSTRAINT FK_CPIR_Contract FOREIGN KEY (ContractNumber, LineOfBusiness, SeriesName, PlanName)
+    REFERENCES Contract (ContractNumber, LineOfBusiness, SeriesName, PlanName),
+
+  -- Define the Foreign Key constraint pointing to the Customer table
+  CONSTRAINT FK_CPIR_Customer FOREIGN KEY (CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
+    REFERENCES Customer (CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB),
+
+  -- Define the Foreign Key constraint pointing to the ContractingPartyRole table
+  CONSTRAINT FK_CPIR_Role FOREIGN KEY (RoleType)
+    REFERENCES ContractingPartyRole (RoleType)
+);
+
+
+
+-- Acct_AcctAdmin & BAcct_BAcctAdmin
