@@ -283,57 +283,57 @@ INSERT INTO ContractingParty VALUES
 
 ### Case 5: Customer (n..n) ContractBenefit - Specific Benefit Recipients
 
-**Business Scenario: Granular Beneficiary Designation**
+**Business Scenario: Daddy Warbucks' Complex Insurance Arrangements**
 
-- Daddy Warbucks' health insurance covers his son and family (they are policy beneficiaries)
-- The Dread Disease Rider is purchased only for the son
-- The son also purchases the company's accident insurance for himself and his family
+- **Daddy Warbucks' health insurance policy**: Covers his son and family as beneficiaries
+- **His son also carries the company's accident insurance**: For himself and his family
 
 **Data Model Problem**:
 Need to designate specific customers as beneficiaries of specific benefits (Riders), not just the entire contract.
 
-**Solution**:
-Create a `BenefitRecipient` table to link customers directly to specific contract benefits.
+**Related Modules of the Model**:
+```
+Customer -(1,N)- ContractingPartyInRole -(N,1)- Contract-h -(1,N)- ContractBenefit
+    |
+  (N,1)
+    |
+ContractingPartyRole
+```
 
+This module builds the Customer (N,N) ContractBenefit relationship.
+
+**Solution**:
+Add a parameter in `ContractingPartyRole` to flag whether this customer is enrolled as a beneficiary in the specific contract and policies. Since customer and contract are (N,N) through `ContractingPartyRole`, for each contract, there are possibly many benefits, and thus multiple `ContractBenefit`. This creates an (N,N) relationship between Customer and ContractBenefit. A Customer can be linked to multiple ContractBenefits through different ContractingPartyRoles across various contracts.
+
+**Implementation**:
 ```sql
-CREATE TABLE BenefitRecipient (
-  ContractNumber VARCHAR(100) NOT NULL,
-  LineOfBusiness VARCHAR(100) NOT NULL,
-  SeriesName VARCHAR(100) NOT NULL,
-  PlanName VARCHAR(100) NOT NULL,
-  RiderName VARCHAR(100) NOT NULL,
-  CustLastName VARCHAR(100) NOT NULL,
-  CustFirstName VARCHAR(100) NOT NULL,
-  CustMiddleInitial CHAR(1) NOT NULL,
-  CustSuffix VARCHAR(10) NOT NULL,
-  CustDOB DATE NOT NULL,
-  CONSTRAINT PK_BenefitRecipient PRIMARY KEY (
-    ContractNumber, LineOfBusiness, SeriesName, PlanName, RiderName, 
-    CustLastName, CustFirstName, CustDOB
-  ),
-  CONSTRAINT FK_BenefitRecipient_ContractBenefit FOREIGN KEY (
-    ContractNumber, LineOfBusiness, SeriesName, PlanName, RiderName
-  ) REFERENCES ContractBenefit(ContractNumber, LineOfBusiness, SeriesName, PlanName, RiderName),
-  CONSTRAINT FK_BenefitRecipient_Customer FOREIGN KEY (
-    CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB
-  ) REFERENCES Customer(CustLastName, CustFirstName, CustMiddleInitial, CustSuffix, CustDOB)
-);
+-- Modify ContractingPartyRole to include beneficiary flag
+ALTER TABLE ContractingPartyRole
+ADD COLUMN IsBeneficiary BOOLEAN DEFAULT FALSE;
+
+-- The existing ContractingParty table already supports the relationship
+-- No additional tables needed
 ```
 
 **Usage Example**:
 ```sql
--- Dread disease rider purchased only for Junior
-INSERT INTO BenefitRecipient VALUES (
-  'HC001', 'Health', 'Family', 'Premium', 'Dread Disease',
-  'Warbucks', 'Junior', 'J', '', '1990-05-15'
-);
+-- Define beneficiary role
+INSERT INTO ContractingPartyRole (RoleType, DescriptionText, IsBeneficiary) VALUES
+  ('Beneficiary', 'Policy Beneficiary', TRUE),
+  ('Owner', 'Policy Owner', FALSE),
+  ('Insured', 'Insured Party', FALSE);
 
--- Junior's accident insurance covers him and his family
-INSERT INTO BenefitRecipient VALUES
-  ('AC001', 'Accident', 'Standard', 'Basic', 'Accident Coverage',
-   'Warbucks', 'Junior', 'J', '', '1990-05-15'),
-  ('AC001', 'Accident', 'Standard', 'Basic', 'Accident Coverage',
-   'Warbucks', 'Jane', 'M', '', '1992-03-20');
+-- Daddy Warbucks' health insurance: his son and family as beneficiaries
+INSERT INTO ContractingParty VALUES
+  ('HC001', 'Health', 'Family', 'Premium', 'Warbucks', 'Junior', 'J', '', '1990-05-15', 'Beneficiary'),
+  ('HC001', 'Health', 'Family', 'Premium', 'Warbucks', 'Jane', 'M', '', '1992-03-20', 'Beneficiary'),
+  ('HC001', 'Health', 'Family', 'Premium', 'Warbucks', 'Daddy', 'D', '', '1960-01-01', 'Owner');
+
+-- His son's accident insurance for himself and his family
+INSERT INTO ContractingParty VALUES
+  ('AC001', 'Accident', 'Standard', 'Basic', 'Warbucks', 'Junior', 'J', '', '1990-05-15', 'Owner'),
+  ('AC001', 'Accident', 'Standard', 'Basic', 'Warbucks', 'Junior', 'J', '', '1990-05-15', 'Beneficiary'),
+  ('AC001', 'Accident', 'Standard', 'Basic', 'Warbucks', 'Jane', 'M', '', '1992-03-20', 'Beneficiary');
 ```
 
 ---
@@ -378,16 +378,38 @@ INSERT INTO Account_Member (
 
 ### Case 7: Customer (n..n) Associate - Commission Bequests
 
-**Business Scenario: Walt and Dave's Bequests**
+**Business Scenario: Walt and Dave's Commission Inheritance**
 
-- Walt is a long-standing sales associate of the company who passes away and bequeaths his commissions to his wife and son
-- Dave, another long-standing company sales associate and friend of Walt's family, also passes away and bequeaths his commissions to Walt's son
+- **Walt**, a long-standing sales associate of the company, passes away bequeathing his commissions to his wife and son
+- **Dave**, another long-standing company sales associate and friend of Walt's family, also passes away bequeathing his commissions to Walt's son
+
+**Related Modules of the Model**:
+The relationship is built through three chained modules:
+
+1. **Customer (N,N) ContractPremium relationship**:
+   ```
+   Customer (N,N) Contract-h -(1,N)- ContractBenefit -(1,N)- ContractPremium
+   ```
+   (same as case 5)
+
+2. **ContractPremium (N,N) ManagerContract relationship**:
+   ```
+   ContractPremium -(1,N)- Premium_MgmtContract -(N,1)- ManagerContract
+   ```
+
+3. **ManagerContract (N,1) Associate relationship**:
+   ```
+   ManagerContract (N,1) Associate
+   ```
+   (same as case 2)
 
 **Data Model Problem**:
-Need to record relationships where non-associates (Customers) receive commissions from associates (Associates), such as through bequests.
+Each associate can have multiple commissions (`Premium_MgmtContract`) through the contracts they belong to. All commissions will be divided or distributed to some beneficiaries, and the beneficiaries are a specific kind of customer, with the type or role stored in the `ContractingPartyRole`. 
+
+Usually, the beneficiaries are the associates themselves as the customer who receives commission. But in the case provided, the associates that passed away will have their commissions updated or redirected to new beneficiaries (e.g., family members) who will be recorded as new Customer entries in the model, and then receive the commission from the associates.
 
 **Solution**:
-Create an `AssociateBeneficiary` table to manage these beneficiary designations.
+Create an `AssociateBeneficiary` table to manage these beneficiary designations and commission inheritance.
 
 ```sql
 CREATE TABLE AssociateBeneficiary (
@@ -459,17 +481,14 @@ INSERT INTO AssociateBeneficiary VALUES
 3. **ContractingPartyRole**
    - Defines role types for customers in contracts
    - Roles include: Owner, Payer, Insured, Beneficiary
+   - New field: `IsBeneficiary BOOLEAN` - Flags whether this role represents a beneficiary in the contract
 
 4. **ContractingParty**
    - Links Customer and Contract, explicitly defining customer roles in contracts
    - Supports one contract with multiple customers, each playing different roles
+   - Through ContractingPartyRole, enables Customer (N,N) ContractBenefit relationship
 
-5. **BenefitRecipient**
-   - Links Customer and ContractBenefit
-   - Designates specific customers as beneficiaries of specific benefits (Riders)
-   - Supports granular beneficiary management
-
-6. **AssociateBeneficiary**
+5. **AssociateBeneficiary**
    - Links Associate and Customer
    - Manages commission bequests or splits from associates to customers
    - Includes percentage and effective date details

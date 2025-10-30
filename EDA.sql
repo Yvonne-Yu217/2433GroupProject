@@ -1232,6 +1232,7 @@ CREATE TABLE LifePremium (
 CREATE TABLE ContractingPartyRole (
   RoleType VARCHAR(100) NOT NULL,
   DescriptionText TEXT,
+  IsBeneficiary BOOLEAN DEFAULT FALSE,
   CONSTRAINT PK_ContractingPartyRole PRIMARY KEY (RoleType)
 );
 
